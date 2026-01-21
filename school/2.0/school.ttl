@@ -1,0 +1,173 @@
+@prefix : <http://example.org/school/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix vaem: <http://www.linkedmodel.org/1.2/schema/vaem#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:2.0 a owl:Ontology;
+  <http://open-services.net/ns/core#modifiedBy> "admin";
+  dct:contributor "admin";
+  dct:modified "2026-01-16T18:35:56.564Z"^^xsd:dateTime;
+  dct:title "School Ontology"@en;
+  <http://purl.org/ontology/bibo/status> <http://purl.org/spar/pso/draft>;
+  rdfs:comment "A basic ontology for managing students, teachers, and courses.";
+  rdfs:label "School Ontology";
+  owl:priorVersion <http://example.org/school/>;
+  owl:versionInfo "2.0" .
+
+:Course a owl:Class;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Course" .
+
+:CourseShape a sh:NodeShape;
+  rdfs:label "Course Shape";
+  sh:property [
+      sh:datatype xsd:string;
+      sh:description "e.g., MATH101";
+      sh:minCount 1;
+      sh:name "Course Code";
+      sh:path :courseCode
+    ], [
+      sh:class :Department;
+      sh:maxCount 1;
+      sh:name "Department";
+      sh:path :belongsToDept
+    ], [
+      sh:datatype xsd:integer;
+      sh:name "Credits";
+      sh:path :credits
+    ];
+  sh:targetClass :Course .
+
+:Department a owl:Class;
+  <http://open-services.net/ns/core#modifiedBy> "admin";
+  dct:contributor "admin";
+  dct:modified "2026-01-16T18:35:56.564Z"^^xsd:dateTime;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Department" .
+
+:DepartmentShape a sh:NodeShape;
+  sh:property [
+      sh:datatype xsd:string;
+      sh:maxCount 1;
+      sh:minCount 1;
+      sh:path :departmentName
+    ];
+  sh:targetClass :Department .
+
+:Person a owl:Class;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Person" .
+
+:Student a owl:Class;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Student";
+  rdfs:subClassOf :Person .
+
+:StudentShape a sh:NodeShape;
+  rdfs:label "Student Shape";
+  sh:property [
+      sh:class :Course;
+      sh:name "Enrolled Courses";
+      sh:nodeKind sh:IRI;
+      sh:order 4;
+      sh:path :enrolledIn
+    ], [
+      sh:datatype xsd:string;
+      sh:name "Email";
+      sh:order 3;
+      sh:path :email;
+      sh:pattern "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    ], [
+      sh:datatype xsd:string;
+      sh:minCount 1;
+      sh:name "Last Name";
+      sh:order 2;
+      sh:path :lastName
+    ], [
+      sh:datatype xsd:string;
+      sh:minCount 1;
+      sh:name "First Name";
+      sh:order 1;
+      sh:path :firstName
+    ];
+  sh:targetClass :Student .
+
+:Teacher a owl:Class;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Teacher";
+  rdfs:subClassOf :Person .
+
+:TeacherShape a sh:NodeShape;
+  rdfs:label "Teacher Shape";
+  sh:property [
+      sh:datatype xsd:string;
+      sh:minCount 1;
+      sh:name "First Name";
+      sh:path :firstName
+    ], [
+      sh:class :Course;
+      sh:name "Teaches";
+      sh:path :teaches
+    ], [
+      sh:datatype xsd:string;
+      sh:minCount 1;
+      sh:name "Last Name";
+      sh:path :lastName
+    ];
+  sh:targetClass :Teacher .
+
+:belongsToDept a owl:ObjectProperty;
+  rdfs:domain :Course;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "belongs to department";
+  rdfs:range :Department .
+
+:courseCode a owl:DatatypeProperty;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Course Code";
+  rdfs:range xsd:string .
+
+:credits a owl:DatatypeProperty;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Credits";
+  rdfs:range xsd:integer .
+
+:departmentName a owl:DatatypeProperty;
+  <http://open-services.net/ns/core#modifiedBy> "admin";
+  dct:contributor "admin";
+  dct:created "2026-01-16T18:35:56.564Z"^^xsd:dateTime;
+  dct:creator "admin";
+  dct:modified "2026-01-16T18:35:56.564Z"^^xsd:dateTime;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Department Name"@en .
+
+:email a owl:DatatypeProperty;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Email Address";
+  rdfs:range xsd:string .
+
+:enrolledIn a owl:ObjectProperty;
+  rdfs:domain :Student;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "enrolled in";
+  rdfs:range :Course .
+
+:firstName a owl:DatatypeProperty;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "First Name";
+  rdfs:range xsd:string .
+
+:lastName a owl:DatatypeProperty;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "Last Name";
+  rdfs:range xsd:string .
+
+:teaches a owl:ObjectProperty;
+  rdfs:domain :Teacher;
+  rdfs:isDefinedBy :2.0;
+  rdfs:label "teaches";
+  rdfs:range :Course .
