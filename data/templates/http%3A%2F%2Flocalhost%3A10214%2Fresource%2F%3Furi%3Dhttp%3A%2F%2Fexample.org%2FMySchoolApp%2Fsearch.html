@@ -1,0 +1,88 @@
+<ol class="page-breadcrumb">
+  <li>
+    <mp-link title="Start" url="{{page-publicPath}}/">Start</mp-link>
+  </li>
+  <li>
+    <mp-link title="MySchoolApp" url="http://localhost:10214/resource/?uri=http%3A%2F%2Flocalhost%3A10214%2Fresource%2F%3Furi%3Dhttp%3A%2F%2Fexample.org%2FMySchoolApp">MySchoolApp</mp-link>
+  </li>
+  <li class="active">Search</li>
+</ol>
+
+<div class="page">
+  <div class="page__header-navtabs">
+    <div class="page__header-body p-4 bg-light border-bottom mb-4">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+           <h1 class="display-4 text-info"><i class="fa fa-search"></i> Search Database</h1>
+           <p class="lead text-muted">Filter and find Students, Teachers, and Courses.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page__body container-fluid">
+    {{!-- Complete Page --}}
+    <semantic-search id="search1" search-profile='{
+      "loadByDomains": [
+        "<http://example.org/school/Course>",
+        "<http://example.org/school/Department>",
+        "<http://example.org/school/Student>",
+        "<http://example.org/school/Teacher>"
+      ]
+    }'>
+      <div class="search">
+        <div class='card-body p-2 bg-light'>
+          <semantic-search-query-universal id="universal-search">
+          </semantic-search-query-universal>
+        </div>
+
+        <semantic-search-facet-store id="facet"></semantic-search-facet-store>
+        <!-- <semantic-search-result-group template="{{> searchResultGroupTemplate}}">
+          <template id="searchResultGroupTemplate">
+            <div class='card-body p-2 bg-light'>
+            <div class="searchTopMenu">
+              {{> Platform:SearchResultsFragments::clearDomain}}
+            </div>
+            {{> Platform:SearchResultsFragments::searchResultGroupTemplate
+              showDomainSelector=true
+              showExplorationFacets=true
+            }}
+            </div>
+          </template>
+        </semantic-search-result-group> -->
+        <semantic-search-result-holder>
+  
+          <div class="card shadow-sm">
+            
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 text-primary">
+                <i class="fa fa-list-alt"></i> Search Results
+              </h5>
+            </div>
+
+            <div class="card-body">
+              <semantic-search-result>
+                    <semantic-table 
+                      id="results-table"
+                      query="SELECT DISTINCT ?subject ?label ?type ?typeLabel WHERE { 
+                              ?subject a ?type .
+                              OPTIONAL { ?subject rdfs:label ?label }
+                              OPTIONAL { ?type rdfs:label ?typeLabel }
+                            }"
+
+                      options='{"showFilter": true}'
+                      class="table table-hover table-striped"
+                      column-configuration='[
+                        {"variableId": "subject", "displayName": "Link", "cellTemplate": "<a href=http://localhost:10214/resource/?uri={{subject.value}} class=\"btn btn-sm btn-outline-primary\">{{label.value}}</a>"}, 
+                        {"variableId": "label", "displayName": "Name", "cellTemplate": "<strong>{{label.value}}</strong>"},
+                        {"variableId": "type", "displayName": "Type", "cellTemplate": "<p>{{typeLabel.value}}</p>"}
+                      ]'>
+                    </semantic-table>
+                  </semantic-search-result>
+            </div>
+          </div>
+        </semantic-search-result-holder>
+      </div>
+    </semantic-search>
+  </div>
+</div>
