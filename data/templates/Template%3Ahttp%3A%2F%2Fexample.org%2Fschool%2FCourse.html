@@ -1,0 +1,195 @@
+<!-- <section class="entity-header">
+  <h1>
+    <mp-label iri="{{page-resource}}"></mp-label>
+  </h1>
+</section>
+
+<section class="entity-summary">
+  <semantic-query
+    query="
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+      SELECT ?email ?org ?orgLabel WHERE {
+        VALUES ?entity { <{{page-resource}}> }
+
+        OPTIONAL {
+          ?entity foaf:mbox ?email
+        }
+
+        OPTIONAL {
+          ?entity foaf:member ?org .
+          ?org rdfs:label ?orgLabel
+        }
+      }
+    "
+    template="{{> summary}}">
+  </semantic-query>
+
+  <template id="summary">
+    <ul>
+      {{#each bindings}}
+        {{#if email}}
+          <li>Email: {{email.value}}</li>
+        {{/if}}
+
+        {{#if org}}
+          <li>
+            Organization:
+            <semantic-link iri="{{org.value}}">
+              {{orgLabel.value}}
+            </semantic-link>
+          </li>
+        {{/if}}
+      {{/each}}
+    </ul>
+  </template>
+</section>
+
+<section class="entity-details">
+  <semantic-table
+    query="
+      SELECT ?p ?o WHERE {
+        VALUES ?entity { <{{page-resource}}> }
+        ?entity ?p ?o
+      }
+    ">
+  </semantic-table>
+</section> -->
+
+
+<div class="page__header-navtabs">
+  <div class="page__header-body p-4 bg-white border-bottom mb-4">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+          <i class="fa fa-user fa-2x text-primary"></i>
+        </div>
+      </div>
+      <div class="col">
+         <h1 class="h2 mb-0 text-dark">
+           <mp-label iri="{{page-resource}}"></mp-label>
+         </h1>
+         <span class="text-muted">Course Details</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm border-top-primary">
+        <div class="card-header bg-white">
+          <h5 class="mb-0 text-primary">
+            <i class="fa fa-id-card"></i> Course Info
+          </h5>
+        </div>
+        <div class="card-body">
+          
+          <semantic-query
+            query="
+              PREFIX : <http://example.org/school/> 
+              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+              SELECT ?courseCode ?credits WHERE 
+                { VALUES ?entity { <{{page-resource}}> } 
+                OPTIONAL { ?entity :courseCode ?courseCode . }  
+                OPTIONAL { ?entity :credits ?credits . } }
+            "
+            template="{{> summary}}">
+
+            <template id="summary">
+              {{#each bindings}}
+                <div>
+
+                  <div class="mb-3">
+                    <label class="small text-muted text-uppercase font-weight-bold">Course Code</label>
+                    <div class="d-flex align-items-center">
+                      {{#if courseCode}}
+                        <span class="text-dark">
+                          {{courseCode.value}}
+                        </span>
+                      {{else}}
+                        <span class="text-muted font-italic">No Course Code provided</span>
+                      {{/if}}
+                    </div>
+                  </div>
+
+                  <hr>
+
+                  <div class="mb-3">
+                    <label class="small text-muted text-uppercase font-weight-bold">Credit Hours</label>
+                    <div class="d-flex align-items-center">
+                      {{#if credits}}
+                        <span>{{credits.value}}</span>
+                      {{else}}
+                        <span class="text-muted font-italic">Credit Hours Not Found</span>
+                      {{/if}}
+                    </div>
+                  </div>
+
+                </div>
+              {{/each}}
+            </template>
+
+          </semantic-query>
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+           <ul class="nav nav-tabs card-header-tabs">
+             <li class="nav-item">
+               <a class="nav-link active" href="#"><i class="fa fa-list"></i> All Properties</a>
+             </li>
+           </ul>
+        </div>
+        <div class="card-body p-0"> <semantic-table
+            query="
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?p ?o ?oIri ?oLabel WHERE {
+                VALUES ?entity { <{{page-resource}}> }
+                ?entity ?p ?o .
+                BIND(?o AS ?oIri)
+                OPTIONAL {
+                  ?o rdfs:label ?oLabel
+                }
+              }
+            "
+            options='{
+              "showFilter": true
+            }'
+            class="table table-hover table-striped mb-0"
+            column-configuration='[
+              {
+                "variableId": "p",
+                "displayName": "Property",
+                "cellTemplate": "<semantic-link iri=\"{{p.value}}\"></semantic-link>"
+              },
+              {
+                "variableId": "o",
+                "displayName": "Value",
+                "cellTemplate": "
+                {{#if oIri}}
+                  {{#if oLabel}}
+                    <semantic-link iri=\"{{oIri.value}}\">{{oLabel.value}}</semantic-link>
+                  {{else}}
+                    {{o.value}}
+                  {{/if}}
+                {{/if}}
+                "
+              }
+            ]'>
+          </semantic-table>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
